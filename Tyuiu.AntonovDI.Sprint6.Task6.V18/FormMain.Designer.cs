@@ -8,22 +8,26 @@ namespace Tyuiu.AntonovDI.Sprint6.Task6.V18
     {
         private System.ComponentModel.IContainer components = null;
 
-        private GroupBox groupBoxTask_ADI;
-        private Label labelTask_ADI;
-        private GroupBox groupBoxIn_ADI;
-        private TextBox textBoxIn_ADI;
-        private GroupBox groupBoxOut_ADI;
-        private TextBox textBoxOut_ADI;
-        private FlowLayoutPanel panelButtons_ADI;
-        private Button buttonOpen_ADI;
-        private Button buttonProcess_ADI;
-        private Button buttonInfo_ADI;
-        private Label labelFileInfo_ADI;
-        private Label labelStats_ADI;
+        private GroupBox groupBoxTask;
+        private Label labelTask;
+
+        private GroupBox groupBoxIn;
+        private GroupBox groupBoxOut;
+
+        private TextBox textBoxIn;
+        private TextBox textBoxOut;
+
+        private FlowLayoutPanel panelButtons;
+        private System.Windows.Forms.Button buttonOpen;
+        private System.Windows.Forms.Button buttonProcess;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button buttonInfo;
+
+        private Label labelFileInfo;
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && components != null)
                 components.Dispose();
             base.Dispose(disposing);
         }
@@ -31,115 +35,114 @@ namespace Tyuiu.AntonovDI.Sprint6.Task6.V18
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+
+            groupBoxTask = new GroupBox();
+            labelTask = new Label();
+
+            groupBoxIn = new GroupBox();
+            groupBoxOut = new GroupBox();
+
+            textBoxIn = new TextBox();
+            textBoxOut = new TextBox();
+
+            panelButtons = new FlowLayoutPanel();
+
+            buttonOpen = new System.Windows.Forms.Button();
+            buttonProcess = new System.Windows.Forms.Button();
+            buttonSave = new System.Windows.Forms.Button();
+            buttonInfo = new System.Windows.Forms.Button();
+
+            labelFileInfo = new Label();
+
             SuspendLayout();
 
-            groupBoxTask_ADI = new GroupBox
-            {
-                Text = "Условия задачи",
-                Dock = DockStyle.Top,
-                Height = 100
-            };
-            labelTask_ADI = new Label
-            {
-                Text = "Программа загружает текстовый файл и выводит слова, содержащие букву 'n'.",
-                Dock = DockStyle.Fill,
-                Padding = new Padding(10)
-            };
-            groupBoxTask_ADI.Controls.Add(labelTask_ADI);
+            // groupBoxTask
+            groupBoxTask.Text = "Условия задачи";
+            groupBoxTask.Dock = DockStyle.Top;
+            groupBoxTask.Height = 80;
 
-            panelButtons_ADI = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Top,
-                Height = 50,
-                Padding = new Padding(10),
-                FlowDirection = FlowDirection.LeftToRight
-            };
+            labelTask.Text = "Загрузить текстовый файл и вывести все слова, содержащие букву 'l'.";
+            labelTask.Dock = DockStyle.Fill;
+            labelTask.Padding = new Padding(10);
 
-            buttonOpen_ADI = new Button
-            {
-                Size = new Size(40, 40),
-                BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\folder_add.png"),
-                BackgroundImageLayout = ImageLayout.Stretch
-            };
-            buttonOpen_ADI.Click += buttonOpen_ADI_Click;
+            groupBoxTask.Controls.Add(labelTask);
 
-            buttonProcess_ADI = new Button
-            {
-                Size = new Size(40, 40),
-                BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\page_white_go.png"),
-                BackgroundImageLayout = ImageLayout.Stretch,
-                Enabled = false
-            };
-            buttonProcess_ADI.Click += buttonProcess_ADI_Click;
+            // panelButtons
+            panelButtons.Dock = DockStyle.Top;
+            panelButtons.Height = 50;
+            panelButtons.Padding = new Padding(10);
+            panelButtons.FlowDirection = FlowDirection.LeftToRight;
 
-            buttonInfo_ADI = new Button
-            {
-                Size = new Size(40, 40),
-                BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\help.png"),
-                BackgroundImageLayout = ImageLayout.Stretch
-            };
-            buttonInfo_ADI.Click += buttonInfo_ADI_Click;
+            // Buttons
+            buttonOpen.Size = new Size(40, 40);
+            buttonProcess.Size = new Size(40, 40);
+            buttonSave.Size = new Size(40, 40);
+            buttonInfo.Size = new Size(40, 40);
 
-            panelButtons_ADI.Controls.Add(buttonOpen_ADI);
-            panelButtons_ADI.Controls.Add(buttonProcess_ADI);
-            panelButtons_ADI.Controls.Add(buttonInfo_ADI);
+            buttonOpen.BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\folder_add.png");
+            buttonProcess.BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\page_white_go.png");
+            buttonSave.BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\save.png");
+            buttonInfo.BackgroundImage = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\help.png");
 
-            groupBoxIn_ADI = new GroupBox
-            {
-                Text = "Содержимое файла",
-                Dock = DockStyle.Left,
-                Width = 400
-            };
-            textBoxIn_ADI = new TextBox
-            {
-                Multiline = true,
-                ReadOnly = true,
-                ScrollBars = ScrollBars.Vertical,
-                Dock = DockStyle.Fill,
-                Font = new Font("Consolas", 10)
-            };
-            groupBoxIn_ADI.Controls.Add(textBoxIn_ADI);
+            buttonOpen.BackgroundImageLayout = ImageLayout.Stretch;
+            buttonProcess.BackgroundImageLayout = ImageLayout.Stretch;
+            buttonSave.BackgroundImageLayout = ImageLayout.Stretch;
+            buttonInfo.BackgroundImageLayout = ImageLayout.Stretch;
 
-            groupBoxOut_ADI = new GroupBox
-            {
-                Text = "Слова с буквой 'n'",
-                Dock = DockStyle.Fill
-            };
-            textBoxOut_ADI = new TextBox
-            {
-                Multiline = true,
-                ReadOnly = true,
-                ScrollBars = ScrollBars.Vertical,
-                Dock = DockStyle.Fill,
-                Font = new Font("Consolas", 10)
-            };
-            groupBoxOut_ADI.Controls.Add(textBoxOut_ADI);
+            // Disable initially
+            buttonProcess.Enabled = false;
+            buttonSave.Enabled = false;
 
-            labelFileInfo_ADI = new Label
-            {
-                AutoSize = true,
-                ForeColor = Color.DarkBlue,
-                Location = new Point(10, panelButtons_ADI.Bottom + 5)
-            };
+            // events
+            buttonOpen.Click += buttonOpen_Click;
+            buttonProcess.Click += buttonProcess_Click;
+            buttonSave.Click += buttonSave_Click;
+            buttonInfo.Click += buttonInfo_Click;
 
-            labelStats_ADI = new Label
-            {
-                AutoSize = true,
-                ForeColor = Color.DarkGreen,
-                Location = new Point(10, labelFileInfo_ADI.Bottom + 5)
-            };
+            panelButtons.Controls.Add(buttonOpen);
+            panelButtons.Controls.Add(buttonProcess);
+            panelButtons.Controls.Add(buttonSave);
+            panelButtons.Controls.Add(buttonInfo);
 
-            ClientSize = new Size(850, 500);
-            Controls.Add(groupBoxOut_ADI);
-            Controls.Add(groupBoxIn_ADI);
-            Controls.Add(labelStats_ADI);
-            Controls.Add(labelFileInfo_ADI);
-            Controls.Add(panelButtons_ADI);
-            Controls.Add(groupBoxTask_ADI);
+            // groupBoxIn
+            groupBoxIn.Text = "Исходный текст";
+            groupBoxIn.Dock = DockStyle.Left;
+            groupBoxIn.Width = 480;
+
+            textBoxIn.Multiline = true;
+            textBoxIn.Dock = DockStyle.Fill;
+            textBoxIn.ScrollBars = ScrollBars.Vertical;
+
+            groupBoxIn.Controls.Add(textBoxIn);
+
+            // groupBoxOut
+            groupBoxOut.Text = "Результат";
+            groupBoxOut.Dock = DockStyle.Fill;
+
+            textBoxOut.Multiline = true;
+            textBoxOut.Dock = DockStyle.Fill;
+            textBoxOut.ScrollBars = ScrollBars.Vertical;
+
+            groupBoxOut.Controls.Add(textBoxOut);
+
+            // labelFileInfo
+            labelFileInfo.AutoSize = true;
+            labelFileInfo.ForeColor = Color.DarkBlue;
+            labelFileInfo.Location = new Point(10, 140);
+
+            // main form
+            ClientSize = new Size(1000, 600);
+
+            Controls.Add(groupBoxOut);
+            Controls.Add(groupBoxIn);
+            Controls.Add(labelFileInfo);
+            Controls.Add(panelButtons);
+            Controls.Add(groupBoxTask);
+
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Спринт 6 | Таск 6 | Вариант 18 | Антонов Д.И.";
-            FormBorderStyle = FormBorderStyle.Sizable;
-            MinimumSize = new Size(850, 500);
+            Text = "Спринт 6 | Task 6 | Вариант 19 | Антонов Д.И.";
+            MinimumSize = new Size(1000, 600);
+
             ResumeLayout(false);
             PerformLayout();
         }

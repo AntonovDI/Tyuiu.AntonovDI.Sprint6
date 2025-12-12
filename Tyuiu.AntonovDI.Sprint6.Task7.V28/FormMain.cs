@@ -1,7 +1,8 @@
-using System;
+п»їusing System;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Tyuiu.AntonovDI.Sprint6.Task7.V28.Lib;
 
@@ -9,9 +10,10 @@ namespace Tyuiu.AntonovDI.Sprint6.Task7.V28
 {
     public partial class FormMain : Form
     {
-        private string selectedFile_ADI = "";
-        private DataService ds_ADI = new DataService();
-        private int[,] matrix_ADI;
+        string selectedFile_ADI = "";
+        int[,] matrix_ADI;
+        int[,] resultMatrix_ADI;
+        DataService ds_ADI = new DataService();
 
         public FormMain() => InitializeComponent();
 
@@ -21,91 +23,110 @@ namespace Tyuiu.AntonovDI.Sprint6.Task7.V28
             {
                 OpenFileDialog ofd = new OpenFileDialog
                 {
-                    Filter = "CSV файлы (*.csv)|*.csv|Все файлы (*.*)|*.*",
-                    Title = "Выберите файл с матрицей"
+                    Filter = "CSV С„Р°Р№Р»С‹ (*.csv)|*.csv|Р’СЃРµ С„Р°Р№Р»С‹ (*.*)|*.*",
+                    Title = "Р’С‹Р±РµСЂРёС‚Рµ С„Р°Р№Р»"
                 };
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     selectedFile_ADI = ofd.FileName;
-                    matrix_ADI = ds_ADI.GetMatrix(selectedFile_ADI);
+                    matrix_ADI = LoadMatrix(ofd.FileName);
+
                     dataGridViewIn_ADI.DataSource = ToDataTable(matrix_ADI);
+                    ConfigureGrid(dataGridViewIn_ADI);
+
                     buttonProcess_ADI.Enabled = true;
-                    labelFileInfo_ADI.Text = $"Выбран файл: {Path.GetFileName(selectedFile_ADI)} | Размер: {matrix_ADI.GetLength(0)}x{matrix_ADI.GetLength(1)}";
+                    buttonSave_ADI.Enabled = false;
+
+                    labelFileInfo_ADI.Text = "Р¤Р°Р№Р»: " + Path.GetFileName(ofd.FileName);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"Ошибка при загрузке файла:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё С„Р°Р№Р»Р°.");
             }
+        }
+
+        private int[,] LoadMatrix(string path)
+        {
+            var lines = File.ReadAllLines(path);
+            int rows = lines.Length;
+            int cols = lines[0].Split(';').Length;
+            int[,] m = new int[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                var values = lines[i].Split(';').Select(t => t.Trim()).ToArray();
+                for (int j = 0; j < cols; j++)
+                    m[i, j] = int.Parse(values[j]);
+            }
+
+            return m;
         }
 
         private void buttonProcess_ADI_Click(object sender, EventArgs e)
         {
-            try
+            if (matrix_ADI == null)
             {
-                if (matrix_ADI == null)
-                {
-                    MessageBox.Show("Сначала выберите файл!", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                int[,] resultMatrix_ADI = ds_ADI.ProcessMatrix(matrix_ADI);
-                dataGridViewOut_ADI.DataSource = ToDataTable(resultMatrix_ADI);
-                ConfigureDataGridView(dataGridViewOut_ADI);
-
-                SaveFileDialog sfd = new SaveFileDialog
-                {
-                    Filter = "CSV файлы (*.csv)|*.csv|Все файлы (*.*)|*.*",
-                    FileName = "OutPutFileTask7V28.csv",
-                    Title = "Сохранить результат"
-                };
-
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    ds_ADI.SaveMatrix(resultMatrix_ADI, sfd.FileName);
-                    MessageBox.Show($"Файл успешно сохранен:\n{sfd.FileName}", "Сохранение завершено", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                MessageBox.Show("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРёС‚Рµ С„Р°Р№Р».");
+                return;
             }
-            catch (Exception ex)
+
+            resultMatrix_ADI = ds_ADI.ProcessMatrix(matrix_ADI);
+
+            dataGridViewOut_ADI.DataSource = ToDataTable(resultMatrix_ADI);
+            ConfigureGrid(dataGridViewOut_ADI);
+
+            buttonSave_ADI.Enabled = true;
+        }
+
+        private void buttonSave_ADI_Click(object sender, EventArgs e)
+        {
+            if (resultMatrix_ADI == null)
             {
-                MessageBox.Show($"Ошибка при обработке матрицы:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("РЎРЅР°С‡Р°Р»Р° РІС‹РїРѕР»РЅРёС‚Рµ РѕР±СЂР°Р±РѕС‚РєСѓ.");
+                return;
+            }
+
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "CSV С„Р°Р№Р»С‹ (*.csv)|*.csv|Р’СЃРµ С„Р°Р№Р»С‹ (*.*)|*.*",
+                FileName = "OutMatrixV28.csv"
+            };
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                ds_ADI.SaveMatrix(resultMatrix_ADI, sfd.FileName);
+                MessageBox.Show("Р¤Р°Р№Р» СЃРѕС…СЂР°РЅС‘РЅ.");
             }
         }
 
         private void buttonInfo_ADI_Click(object sender, EventArgs e)
         {
-            Form infoForm = new Form
+            Form f = new Form
             {
-                Text = "О программе",
+                Text = "Рћ РїСЂРѕРіСЂР°РјРјРµ",
                 Size = new Size(580, 320),
                 StartPosition = FormStartPosition.CenterScreen,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
-                MinimizeBox = false
+                FormBorderStyle = FormBorderStyle.FixedDialog
             };
 
-            PictureBox pic_ADI = new PictureBox
+            PictureBox pic = new PictureBox
             {
-                ImageLocation = @"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\autor.jpg",
+                Image = Image.FromFile(@"C:\AntonovDI\Tyuiu.AntonovDI.Sprint6\img\autor.jpg"),
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Size = new Size(120, 160),
                 Location = new Point(20, 20)
             };
 
-            Label lbl_ADI = new Label
+            Label lbl = new Label
             {
-                Text = "Разработчик: Антонов Даниил Иванович\n" +
-                       "Группа: ИСТНб-25-1\n" +
-                       "Программа разработана в рамках обучения языка C#\n" +
-                       "Тюменский индустриальный университет (с) 2025\n" +
-                       "Высшая школа цифровых технологий (с) 2025\n" +
-                       "Внутреннее имя проекта: Tyuiu.Sprint6.Task7.V28",
+                Text = "РђРЅС‚РѕРЅРѕРІ Р”Р°РЅРёРёР» РРІР°РЅРѕРІРёС‡\nРРЎРўРќР±-25-1\nРЎРїСЂРёРЅС‚ 6 вЂ” Р—Р°РґР°РЅРёРµ 7\nРўРРЈ 2025",
                 Location = new Point(160, 20),
                 AutoSize = true
             };
 
-            Button okBtn_ADI = new Button
+            Button ok = new Button
             {
                 Text = "OK",
                 Size = new Size(80, 30),
@@ -113,46 +134,42 @@ namespace Tyuiu.AntonovDI.Sprint6.Task7.V28
                 DialogResult = DialogResult.OK
             };
 
-            infoForm.Controls.Add(pic_ADI);
-            infoForm.Controls.Add(lbl_ADI);
-            infoForm.Controls.Add(okBtn_ADI);
-            infoForm.AcceptButton = okBtn_ADI;
-            infoForm.ShowDialog();
+            f.Controls.Add(pic);
+            f.Controls.Add(lbl);
+            f.Controls.Add(ok);
+            f.AcceptButton = ok;
+            f.ShowDialog();
         }
 
-        private DataTable ToDataTable(int[,] array)
+        private DataTable ToDataTable(int[,] arr)
         {
-            int rows = array.GetLength(0), cols = array.GetLength(1);
-            DataTable dt = new DataTable();
+            int rows = arr.GetLength(0);
+            int cols = arr.GetLength(1);
 
-            // Только числа: 1, 2, 3 ... без "Столбец"
-            for (int c = 0; c < cols; c++) dt.Columns.Add((c + 1).ToString(), typeof(string));
+            DataTable dt = new DataTable();
+            for (int i = 0; i < cols; i++)
+                dt.Columns.Add((i + 1).ToString());
 
             for (int r = 0; r < rows; r++)
             {
                 DataRow dr = dt.NewRow();
-                for (int c = 0; c < cols; c++) dr[c] = array[r, c].ToString();
+                for (int c = 0; c < cols; c++)
+                    dr[c] = arr[r, c];
                 dt.Rows.Add(dr);
             }
+
             return dt;
         }
 
-        private void ConfigureDataGridView(DataGridView dgv)
+        private void ConfigureGrid(DataGridView d)
         {
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowHeadersVisible = true;
+            d.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            d.RowHeadersVisible = true;
 
-            // Только числа для строк, без "Строка"
-            for (int i = 0; i < dgv.Rows.Count; i++)
-                dgv.Rows[i].HeaderCell.Value = (i + 1).ToString();
+            for (int i = 0; i < d.Rows.Count; i++)
+                d.Rows[i].HeaderCell.Value = (i + 1).ToString();
 
-            dgv.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
-
-            if (dgv.Rows.Count > 6)
-            {
-                dgv.Rows[6].DefaultCellStyle.BackColor = Color.LightYellow;
-                dgv.Rows[6].DefaultCellStyle.Font = new Font(dgv.Font, FontStyle.Bold);
-            }
+            d.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
         }
     }
 }
